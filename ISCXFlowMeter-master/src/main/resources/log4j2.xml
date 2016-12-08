@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Log4j2 Definitions: 
+ERROR: the error level includes any exceptions thrown 
+WARN : the warn level includes any unexpected results (e.g. there are no events 
+	   retrieved) that does not impact the system but should be warned 
+INFO : the info level includes any useful information to display (e.g. status reports) -->
+
+<Configuration status="ERROR"> <!-- Status logger; level of internal Log4j events; e.g. loading plugins -->
+	<Properties>
+		<Property name="log-path">logs</Property>
+	</Properties>
+	<Appenders>
+		<Console name="Console" target="SYSTEM_OUT">
+			<PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n" /> <!-- Console output format -->
+		</Console>
+		<RollingFile name="RollingFile" fileName="${log-path}/log.log"
+			filePattern="${log-path}/log-%d{yyyy-MM-dd}-%i.log"> <!-- File rolls over for days (daily if interval = 1) -->
+			<PatternLayout>
+				<pattern>%d{yyyy-MM-dd HH:mm:ss.SSS}- - %msg%n
+				</pattern>
+			</PatternLayout>
+			<Policies>
+				<TimeBasedTriggeringPolicy interval="1"
+					modulate="true" />
+				<SizeBasedTriggeringPolicy size="500 KB" />
+			</Policies>
+		</RollingFile>
+	</Appenders>
+	<Loggers>
+		<Logger name="newone" level="ERROR" />
+		<Root level="INFO"> <!-- Root logger is the default logger if any are missing 
+			<AppenderRef ref="Console" /> -->
+			<AppenderRef ref="RollingFile" /> 
+		</Root>
+	</Loggers>
+</Configuration>

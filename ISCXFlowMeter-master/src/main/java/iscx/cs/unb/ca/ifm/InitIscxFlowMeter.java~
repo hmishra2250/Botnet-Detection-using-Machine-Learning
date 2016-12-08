@@ -1,0 +1,77 @@
+package iscx.cs.unb.ca.ifm;
+
+import iscx.cs.unb.ca.ifm.data.BasicPacketInfo;
+import iscx.cs.unb.ca.ifm.flowgen.FlowGenerator;
+import iscx.cs.unb.ca.ifm.reader.PacketReader;
+
+import java.io.File;
+import org.jnetpcap.PcapClosedException;
+
+public class InitIscxFlowMeter {
+
+	public static void main(String[] args) {
+		
+		PacketReader    packetReader;
+		BasicPacketInfo basicPacket = null;
+		FlowGenerator   flowGen; //15000 useconds = 15ms
+		
+		boolean readIP6 = false;
+		boolean readIP4 = true;
+		
+		int     totalFlows = 0;
+
+		/* Select path */
+		String   path ="/tmp/";
+		String   outpath = "/tmp/";
+		String[] files = new File(path).list();
+		
+		//files = new String[]{""};
+		
+		System.out.println("Found "+files.length+" Files..");
+		for(String file:files){		
+			
+			flowGen = new FlowGenerator(true,120000000L, 5000000L); 
+			packetReader = new PacketReader(path+file,readIP4,readIP6);
+
+			System.out.println("starting... "+file);
+	
+			int nValid=0;
+			int nTotal=0;
+			int nDiscarded = 0;
+			
+			long start = System.currentTimeMillis();
+						
+		    while(true){
+				try{
+					basicPacket = packetReader.nextPacket();					
+					nTotal++;					
+					if(basicPacket!=null){
+						flowGen.addPacket(basicPacket);
+						nValid++;
+					}else{
+						nDiscarded++;
+					}
+				}catch(PcapClosedException e){
+					break;
+				}
+			}		
+			
+			long end = System.currentTimeMillis();
+			System.out.println("Done! in "+ ((end-start)/1000) + " seconds.");
+			System.out.println("\t Total packets: "+ nTotal);
+			System.out.println("\t Valid packets: "+ nValid);
+			System.out.println("\t Ignored packets: "+ nDiscarded + " " + (nTotal-nValid) );
+			System.out.println("PCAP duration "+ ((packetReader.getLastPacket()-packetReader.getFirstPacket())/1000) + " seconds.");
+			System.out.println("----------------------------------------------------------------------------");
+			totalFlows+=flowGen.dumpLabeledTimeBasedFeatures(outpath, "nonTOR_"+file+".csv");
+			//flowGen.dumpTimeBasedFeatures(outpath, file+".csv");
+			System.out.println("----------------------------------------------------------------------------\n TOTAL FLOWS GENERATED: "+totalFlows);
+		}
+		
+//		try {
+//			Files.write(Paths.get("src/main/resources/executionLog.log"),flowGen.dumpFlows().getBytes());
+//		} catch (IOException e) {			
+//			e.printStackTrace();
+//		}
+	}
+}
