@@ -3,6 +3,7 @@ This is a Python implementation of Network Traffic Flow Generator and Feature Ex
 1. To identify the flows in the network traffic <br>
 2. To extract features to characterize the Flows
 <br>
+<a> Please Have a look at Flow Feature file in this directory for understanding the Flows and the Features in network traffic</a>
 ## PREREQUISITES
 1. GraphLab library should be installed. <a href = "https://turi.com/download/install-graphlab-create-command-line.html">Link to install graphlab </a> and <a href= "https://turi.com/download/academic.html">get the License Key</a>.<br>
 2. TensorFlow should be installed.<br>
@@ -56,8 +57,10 @@ Average inter arrival time of packets<br>
 Average packets-per-second<br>
  </p>
  ## FUTURE WORK
- 1. Automatically extract the CSV File from the pcap File of the captured traffic.<br>
- 2. 
+ The Future work will be to make this Custom Flow Generator implementation as a user-friendly tool.<br>
+ 1. Automatically extract the CSV File from the pcap File of the captured traffic with the required columns.<br>
+ 2. Give Option For choosing the features to be generated. <br>
+ 3. Merge the implentation for Unidirectional Flows and give an option to choose For Unidirectional or Bidirectional FLows.<br>
  
  
  
