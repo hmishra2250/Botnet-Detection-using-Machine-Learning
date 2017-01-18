@@ -3,7 +3,7 @@ This is a Python implementation of Network Traffic Flow Generator and Feature Ex
 1. To identify the flows in the network traffic <br>
 2. To extract features to characterize the Flows
 <br>
-<a> Please Have a look at Flow Feature file in this directory for understanding the Flows and the Features in network traffic</a>
+<a> Please Have a look at <a href = "https://github.com/hmishra2250/BTP/blob/master/Custom%20Flow%20Generator/FlowBasedFeatures.txt">Flow Feature file </a> in this directory for understanding the Flows and the Features in network traffic</a>
 ## PREREQUISITES
 1. GraphLab library should be installed. <a href = "https://turi.com/download/install-graphlab-create-command-line.html">Link to install graphlab </a> and <a href= "https://turi.com/download/academic.html">get the License Key</a>.<br>
 2. TensorFlow should be installed.<br>
