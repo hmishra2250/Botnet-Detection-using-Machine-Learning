@@ -5,7 +5,7 @@ This is a Python implementation of Network Traffic Flow Generator and Feature Ex
 <br>
 <a> Please Have a look at <a href = "https://github.com/hmishra2250/BTP/blob/master/Custom%20Flow%20Generator/FlowBasedFeatures.txt">Flow Feature file </a> in this directory for understanding the Flows and the Features in network traffic</a>
 ## PREREQUISITES
-1. GraphLab library should be installed. <a href = "https://turi.com/download/install-graphlab-create-command-line.html">Link to install graphlab </a> and <a href= "https://turi.com/download/academic.html">get the License Key</a>.<br>
+1. <a href="https://github.com/turi-code/SFrame">SFrame</a> should be installed.
 2. CSV Input file having the packets captured and the columns mentioned should be available using Wireshark.<br>
 ## INPUT
 A CSV File of Network Traffic capture. It can be easily done using Wireshark, an Open Source tool. The following columns must be there in the CSV: <br>
