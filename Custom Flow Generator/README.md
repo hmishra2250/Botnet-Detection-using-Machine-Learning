@@ -37,19 +37,18 @@ Destination IP<br>
 Source port<br>
 Destination port<br>
 Protocol<br>
-Total number of packets ex-changed<br>
-Number of null packets ex-changed<br>
+NumPackets(Total number of packets ex-changed)<br>
+NPEx(Number of null packets ex-changed)<br>
 IOPR (ratio between the number of incoming packets over the number of outgoing packets)<br>
 Reconnect (number of reconnects)<br>
 Duration (flow duration)<br>
-FPS (length of the first packet)<br>
+FPL (length of the first packet)<br>
 Total number of bytes<br>
-Average payload packet length<br>
-Dotal number of packets with the same length over the total num-ber of packets<br>
+APL(Average payload packet length)<br>
+SameLenPktRatio(Total number of packets with the same length over the total num-ber of packets)<br>
 Standard deviation of payload packet length<br>
 Average bits-per-second<br>
-Average packets-per-second in a time window<br>
-Average inter arrival time of packets<br>
+IAT(Average inter arrival time of packets)<br>
 Average packets-per-second<br>
  </p>
  ## FUTURE WORK
