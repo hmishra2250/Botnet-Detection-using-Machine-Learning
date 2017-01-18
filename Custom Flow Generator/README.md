@@ -16,16 +16,13 @@ A CSV File of Network Traffic capture. It can be easily done using Wireshark, an
      'Destination Port',<br>
      'Protocol',<br>
      'Protocols in frame',<br>
-     'Differentiated Services Field',<br>
      'Time',<br>
      'IP_Flags',<br>
-     'Info',<br>
      'Length',<br>
      'Next sequence number',<br>
      'No.',<br>
      'Sequence number',<br>
      'TCP Segment Len',<br>
-     'Time to live',<br>
      'tcp_Flags',<br>
      'udp_Length'
      
