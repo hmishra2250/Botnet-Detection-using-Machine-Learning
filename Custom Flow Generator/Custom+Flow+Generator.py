@@ -3,7 +3,7 @@
 
 # In[2]:
 import sys
-import sframe as gl
+import sframe as sf
 import matplotlib.pyplot as plt
 
 # Function to give unique id to every 5 tuple of Souce, Destination, Source Port, Destination Port and Protocol
@@ -23,7 +23,7 @@ def compareUF(x,y):
 # Function to identify the unique Flow No. of every packet 
 # Input : csv file of the packet capture, converted using Wireshark
 def FlowIdentifier(filename):
-    SF2 = gl.SFrame.read_csv(filename,verbose=False)
+    SF2 = sf.SFrame.read_csv(filename,verbose=False)
     print "Done reading"
     
     # Removing records not having Source or Destination Ports
@@ -98,16 +98,16 @@ def FlowIdentifier(filename):
             startTime = x['Time']
 
 
-    print len(gl.SArray(Flow).unique())
+    print len(sf.SArray(Flow).unique())
 
 
-    SF2['Flow'] = gl.SArray(Flow)
+    SF2['Flow'] = sf.SArray(Flow)
     temp = SF2.groupby('Flow',{
-                'Count':gl.aggregate.COUNT()
+                'Count':sf.aggregate.COUNT()
             })
     #len(temp[temp['Count']>1])
 
-    SF2['FlowNo.'] = gl.SArray(Flow)
+    SF2['FlowNo.'] = sf.SArray(Flow)
 
 	# Output of this function : Packet wise Flow Number marked and stored as a csv file in the same folder.
 	# This file will be used to generate the features
@@ -122,14 +122,14 @@ def Flow_Feature_Generator(packetcapturecsv):
 
 	# Generate packet wise flow numbers
     FlowIdentifier(packetcapturecsv)
-    SF2 = gl.SFrame.read_csv('Ports_Only_Sorted_Flow_BD.csv',verbose=False)
+    SF2 = sf.SFrame.read_csv('Ports_Only_Sorted_Flow_BD.csv',verbose=False)
     
     ## FLOW BASED FEATURE GENERATION
     
     ## Ratio of incoming to outgoing packets
     temp = SF2.groupby('FlowNo.',{
-            'NumForward' : gl.aggregate.SUM('Forward'),
-            'Total' : gl.aggregate.COUNT()
+            'NumForward' : sf.aggregate.SUM('Forward'),
+            'Total' : sf.aggregate.COUNT()
         })
     temp['IOPR']= temp.apply(lambda x: ((x['Total']-x['NumForward'])*1.0)/x['NumForward'] if x['NumForward'] !=0 else (-1) )
     temp = temp['FlowNo.','IOPR']
@@ -141,12 +141,12 @@ def Flow_Feature_Generator(packetcapturecsv):
     ## First Packet Length
     FlowFeatures = ['Source','Destination','Source Port','Destination Port','Protocol']
     FPL = SF2.groupby(['FlowNo.'],{
-            'Time':gl.aggregate.MIN('Time')
+            'Time':sf.aggregate.MIN('Time')
         })
     #print len(FPL)
     FPL = FPL.join(SF2,on =['FlowNo.','Time'])[['FlowNo.','Length']].unique()
     FPL = FPL.groupby(['FlowNo.'],{
-            'FPL':gl.aggregate.AVG('Length')
+            'FPL':sf.aggregate.AVG('Length')
         })
 
     SF2 = SF2.join(FPL, on ='FlowNo.')
@@ -158,7 +158,7 @@ def Flow_Feature_Generator(packetcapturecsv):
 
     ## Number of packets per flow
     temp = SF2.groupby(['FlowNo.'],{
-            'NumPackets':gl.aggregate.COUNT()
+            'NumPackets':sf.aggregate.COUNT()
         })
     #print temp.head(3)
     SF2 = SF2.join(temp, on ='FlowNo.')
@@ -167,7 +167,7 @@ def Flow_Feature_Generator(packetcapturecsv):
 
     ## Number of bytes exchanged
     temp = SF2.groupby(['FlowNo.'],{
-            'BytesEx':gl.aggregate.SUM('Length')
+            'BytesEx':sf.aggregate.SUM('Length')
         })
     SF2 = SF2.join(temp, on ='FlowNo.')
     del(temp)
@@ -177,7 +177,7 @@ def Flow_Feature_Generator(packetcapturecsv):
 
     ## Standard deviation of packet length
     temp = SF2.groupby(['FlowNo.'],{
-            'StdDevLen':gl.aggregate.STDV('Length')
+            'StdDevLen':sf.aggregate.STDV('Length')
         })
     SF2 = SF2.join(temp, on ='FlowNo.')
     del(temp)
@@ -187,11 +187,11 @@ def Flow_Feature_Generator(packetcapturecsv):
 
     ## Same length packet ratio
     temp2 = SF2.groupby(['FlowNo.'],{
-            'SameLenPktRatio':gl.aggregate.COUNT_DISTINCT('Length')
+            'SameLenPktRatio':sf.aggregate.COUNT_DISTINCT('Length')
         })
     ##temp from number of packets computation
     temp = SF2.groupby(['FlowNo.'],{
-            'NumPackets':gl.aggregate.COUNT()
+            'NumPackets':sf.aggregate.COUNT()
         })
     temp = temp.join(temp2,on='FlowNo.')
     temp['SameLenPktRatio'] = temp['SameLenPktRatio']*1.0/temp['NumPackets']
@@ -204,8 +204,8 @@ def Flow_Feature_Generator(packetcapturecsv):
 
     ## Duration of flow
     timeF = SF2.groupby(['FlowNo.'],{
-            'startTime':gl.aggregate.MIN('Time'),
-            'endTime':gl.aggregate.MAX('Time')
+            'startTime':sf.aggregate.MIN('Time'),
+            'endTime':sf.aggregate.MAX('Time')
         })
     timeF['Duration'] = timeF['endTime'] - timeF['startTime']
     timeF = timeF[['FlowNo.','Duration']]
@@ -223,11 +223,9 @@ def Flow_Feature_Generator(packetcapturecsv):
      'BytesEx',
      'Destination',
      'Destination Port',
-     'Differentiated Services Field',
      'Duration',
      'FPL',
      'IP_Flags',
-     'Info',
      'Length',
      'Next sequence number',
      'No.',
@@ -241,7 +239,6 @@ def Flow_Feature_Generator(packetcapturecsv):
      'StdDevLen',
      'TCP Segment Len',
      'Time',
-     'Time to live',
      'tcp_Flags',
      'FlowNo.',
      'udp_Length',
@@ -253,7 +250,7 @@ def Flow_Feature_Generator(packetcapturecsv):
 
     ## Average packets per second
     temp =  SF2.groupby(['FlowNo.'],{
-            'NumPackets':gl.aggregate.COUNT()
+            'NumPackets':sf.aggregate.COUNT()
         })
     temp = temp.join(timeF,on=['FlowNo.'])
     temp['AvgPktPerSec'] = temp.apply(lambda x:0.0 if x['Duration'] == 0.0 else x['NumPackets']*1.0/x['Duration'])
@@ -265,7 +262,7 @@ def Flow_Feature_Generator(packetcapturecsv):
 
     ##Average Bits Per Second
     temp = SF2.groupby(['FlowNo.'],{
-            'BytesEx':gl.aggregate.SUM('Length')
+            'BytesEx':sf.aggregate.SUM('Length')
         })
     temp = temp.join(timeF,on=['FlowNo.'])
     temp['BitsPerSec'] = temp.apply(lambda x:0.0 if x['Duration'] == 0.0 else x['BytesEx']*8.0/x['Duration'])
@@ -277,7 +274,7 @@ def Flow_Feature_Generator(packetcapturecsv):
 
     ## Average Packet Lentgth
     temp = SF2.groupby(['FlowNo.'],{
-            'APL':gl.aggregate.AVG('Length')
+            'APL':sf.aggregate.AVG('Length')
         })
     SF2 = SF2.join(temp, on ='FlowNo.')
     del(temp)
@@ -299,7 +296,7 @@ def Flow_Feature_Generator(packetcapturecsv):
             li.append(x['Time']-prevT)        
         prev = x['FlowNo.']
         prevT = x['Time']
-    SF2['IAT'] = gl.SArray(li)
+    SF2['IAT'] = sf.SArray(li)
 
 
 
@@ -331,7 +328,7 @@ def Flow_Feature_Generator(packetcapturecsv):
 
     SF2['isNull'] = SF2.apply(lambda x:checkNull(x))
     NPEx = SF2.groupby(['FlowNo.'],{
-            'NPEx':gl.aggregate.SUM('isNull')
+            'NPEx':sf.aggregate.SUM('isNull')
         })
     SF2 = SF2.join(NPEx, on ='FlowNo.')
 
@@ -341,8 +338,8 @@ def Flow_Feature_Generator(packetcapturecsv):
     # ### Number of Reconnects - considering only TCP reconnects, using sequence number
 
     recon = SF2[SF2['Sequence number']!=''].groupby(['FlowNo.'],{
-            'total_seq_no.' : gl.aggregate.COUNT('Sequence number'),
-            'distinct_seq_no.' : gl.aggregate.COUNT_DISTINCT('Sequence number')
+            'total_seq_no.' : sf.aggregate.COUNT('Sequence number'),
+            'distinct_seq_no.' : sf.aggregate.COUNT_DISTINCT('Sequence number')
         })
     recon['reconnects'] = recon['total_seq_no.'] - recon['distinct_seq_no.']
     recon.head()
@@ -363,7 +360,7 @@ def Flow_Feature_Generator(packetcapturecsv):
     
     SF2['Forward'] = SF2.apply(lambda x: 1 if x['Source']>x['Destination'] else 0 )
     temp = SF2.groupby('FlowNo.',{
-            'NumForward' : gl.aggregate.SUM('Forward'),
+            'NumForward' : sf.aggregate.SUM('Forward'),
 
         })
 
@@ -373,40 +370,37 @@ def Flow_Feature_Generator(packetcapturecsv):
     
     # Combine the packet level features to select only the FLOW BASED FEATURES
     SF2 = SF2.groupby('FlowNo.',{
-            'Answer RRs': gl.aggregate.SELECT_ONE('Answer RRs'),
-            'BytesEx' : gl.aggregate.SELECT_ONE('BytesEx'),
-            'Destination' : gl.aggregate.SELECT_ONE('Destination'),
-            'Destination Port' : gl.aggregate.SELECT_ONE('Destination Port'),
-            'Differentiated Services Field' : gl.aggregate.SELECT_ONE('Differentiated Services Field'),
-            'Duration' : gl.aggregate.SELECT_ONE('Duration'),
-            'FPL' : gl.aggregate.SELECT_ONE('FPL'),
-            'IP_Flags' : gl.aggregate.SELECT_ONE('IP_Flags'),
-            'Info' : gl.aggregate.SELECT_ONE('Info'),
-            'Length' : gl.aggregate.SELECT_ONE('Length'),
-            'Next sequence number' : gl.aggregate.SELECT_ONE('Next sequence number'),
-            'No.' : gl.aggregate.SELECT_ONE('No.'),
-            'NumPackets' : gl.aggregate.SELECT_ONE('NumPackets'),
-            'Protocol' : gl.aggregate.SELECT_ONE('Protocol'),
-            'Protocols in frame' : gl.aggregate.SELECT_ONE('Protocols in frame'),
-            'SameLenPktRatio' : gl.aggregate.SELECT_ONE('SameLenPktRatio'),
-            'Sequence number' : gl.aggregate.SELECT_ONE('Sequence number'),
-            'Source' : gl.aggregate.SELECT_ONE('Source'),
-            'Source Port' : gl.aggregate.SELECT_ONE('Source Port'),
-            'StdDevLen' : gl.aggregate.SELECT_ONE('StdDevLen'),
-            'IAT' : gl.aggregate.SELECT_ONE('IAT'),
-            'isNull' : gl.aggregate.SELECT_ONE('isNull'),
-            'NPEx' : gl.aggregate.SELECT_ONE('NPEx'),
-            'reconnects' : gl.aggregate.SELECT_ONE('reconnects'),
-            'APL' : gl.aggregate.SELECT_ONE('APL'),
-            'BitsPerSec' : gl.aggregate.SELECT_ONE('BitsPerSec'),
-            'AvgPktPerSec' : gl.aggregate.SELECT_ONE('AvgPktPerSec'),
-            'udp_Length' : gl.aggregate.SELECT_ONE('udp_Length'),
-            'tcp_Flags' : gl.aggregate.SELECT_ONE('tcp_Flags'),
-            'Time to live' : gl.aggregate.SELECT_ONE('Time to live'),
-            'Time' : gl.aggregate.SELECT_ONE('Time'),
-            'TCP Segment Len' : gl.aggregate.SELECT_ONE('TCP Segment Len'),
-            'IOPR' : gl.aggregate.SELECT_ONE('IOPR'),
-            'NumForward' : gl.aggregate.SELECT_ONE('NumForward')
+            'Answer RRs': sf.aggregate.SELECT_ONE('Answer RRs'),
+            'BytesEx' : sf.aggregate.SELECT_ONE('BytesEx'),
+            'Destination' : sf.aggregate.SELECT_ONE('Destination'),
+            'Destination Port' : sf.aggregate.SELECT_ONE('Destination Port'),
+            'Duration' : sf.aggregate.SELECT_ONE('Duration'),
+            'FPL' : sf.aggregate.SELECT_ONE('FPL'),
+            'IP_Flags' : sf.aggregate.SELECT_ONE('IP_Flags'),
+            'Length' : sf.aggregate.SELECT_ONE('Length'),
+            'Next sequence number' : sf.aggregate.SELECT_ONE('Next sequence number'),
+            'No.' : sf.aggregate.SELECT_ONE('No.'),
+            'NumPackets' : sf.aggregate.SELECT_ONE('NumPackets'),
+            'Protocol' : sf.aggregate.SELECT_ONE('Protocol'),
+            'Protocols in frame' : sf.aggregate.SELECT_ONE('Protocols in frame'),
+            'SameLenPktRatio' : sf.aggregate.SELECT_ONE('SameLenPktRatio'),
+            'Sequence number' : sf.aggregate.SELECT_ONE('Sequence number'),
+            'Source' : sf.aggregate.SELECT_ONE('Source'),
+            'Source Port' : sf.aggregate.SELECT_ONE('Source Port'),
+            'StdDevLen' : sf.aggregate.SELECT_ONE('StdDevLen'),
+            'IAT' : sf.aggregate.SELECT_ONE('IAT'),
+            'isNull' : sf.aggregate.SELECT_ONE('isNull'),
+            'NPEx' : sf.aggregate.SELECT_ONE('NPEx'),
+            'reconnects' : sf.aggregate.SELECT_ONE('reconnects'),
+            'APL' : sf.aggregate.SELECT_ONE('APL'),
+            'BitsPerSec' : sf.aggregate.SELECT_ONE('BitsPerSec'),
+            'AvgPktPerSec' : sf.aggregate.SELECT_ONE('AvgPktPerSec'),
+            'udp_Length' : sf.aggregate.SELECT_ONE('udp_Length'),
+            'tcp_Flags' : sf.aggregate.SELECT_ONE('tcp_Flags'),
+            'Time' : sf.aggregate.SELECT_ONE('Time'),
+            'TCP Segment Len' : sf.aggregate.SELECT_ONE('TCP Segment Len'),
+            'IOPR' : sf.aggregate.SELECT_ONE('IOPR'),
+            'NumForward' : sf.aggregate.SELECT_ONE('NumForward')
         })
 
 
