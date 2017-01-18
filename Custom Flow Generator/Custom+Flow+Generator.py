@@ -4,7 +4,6 @@
 # In[2]:
 import sys
 import graphlab as gl
-import tensorflow as tf
 import matplotlib.pyplot as plt
 
 # Function to give unique id to every 5 tuple of Souce, Destination, Source Port, Destination Port and Protocol
