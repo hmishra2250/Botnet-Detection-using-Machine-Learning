@@ -1,4 +1,4 @@
-# BTP
+# Botnet Detection using Machine Learning
 Repository of B.Tech Project on Botnet Detection using Network Traffic Behaviour Analysis and Machine Learning <br>
 <a>Here we present Behavioral flow based Botnet detection approach using modern Machine Learning techniques such as Latest Classifiers and their combinations using Ensembling Techniques.</a><br>
 We also present a custom coded Flow Generator for Flow Identification and feature generation to characterize the network traffic.<br>
