@@ -10,3 +10,14 @@ The description of the files and folders are: <br>
 3. ISCXFlowMeterMaster contains Flow generator given by ISCX. However the flow generator used in this project was custom written inline and also abstracted out for Traffic Analysis. <br>
 3. Deep Learning Folder contains code for deep learning analysis of dataset and the results <br>
 4. Rest are some code files done for analysis in no particular order<br>
+
+## Citing
+@misc{BDMLhmishra2250,
+  author = {Mishra, Himadri},
+  title = {Botnet Detection using Machine Learning},
+  year = {2017},
+  publisher = {GitHub},
+  journal = {GitHub repository},
+  howpublished = {\url{https://github.com/hmishra2250/Botnet-Detection-using-Machine-Learning}},
+  commit = {60793b9ae60d5bc30fb9738a4365fc7aa1d5064a}
+}
