@@ -13,7 +13,7 @@ The description of the files and folders are: <br>
 
 ## Citing
 @misc{BDMLhmishra2250,<br>
-  author = {Mishra, Himadri},<br>
+  author = {Himadri Mishra, Kartik Manchanda},<br>
   title = {Botnet Detection using Machine Learning},<br>
   year = {2017},<br>
   publisher = {GitHub},<br>
