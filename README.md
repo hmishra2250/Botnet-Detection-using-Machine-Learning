@@ -12,12 +12,12 @@ The description of the files and folders are: <br>
 4. Rest are some code files done for analysis in no particular order<br>
 
 ## Citing
-@misc{BDMLhmishra2250,
-  author = {Mishra, Himadri},
-  title = {Botnet Detection using Machine Learning},
-  year = {2017},
-  publisher = {GitHub},
-  journal = {GitHub repository},
-  howpublished = {\url{https://github.com/hmishra2250/Botnet-Detection-using-Machine-Learning}},
-  commit = {60793b9ae60d5bc30fb9738a4365fc7aa1d5064a}
+@misc{BDMLhmishra2250,<br>
+  author = {Mishra, Himadri},<br>
+  title = {Botnet Detection using Machine Learning},<br>
+  year = {2017},<br>
+  publisher = {GitHub},<br>
+  journal = {GitHub repository},<br>
+  howpublished = {\url{https://github.com/hmishra2250/Botnet-Detection-using-Machine-Learning}},<br>
+  commit = {60793b9ae60d5bc30fb9738a4365fc7aa1d5064a}<br>
 }
